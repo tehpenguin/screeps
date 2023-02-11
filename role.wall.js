@@ -40,10 +40,10 @@ console.log(creep.memory.repairing, "wall test2")
                 }
             }
             // if we can't fine one
-            else {
+            /**else {
                 // look for construction sites
                 roleBuilder.run(creep);
-            } 
+            } **/
         }
         // if creep is supposed to harvest energy from source
         else {
@@ -57,8 +57,8 @@ console.log(creep.memory.repairing, "wall test2")
                 filter: { structureType: STRUCTURE_CONTAINER }
                 
             });
-            console.log(storage)
-           if (creep.memory.repairing == true && storage != undefined) {
+            //console.log(storage)
+           if (creep.memory.repairing == false && storage != undefined) {
             
                 // try to repair it, if it is out of range
                 if (creep.withdraw(storage, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
