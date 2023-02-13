@@ -1,43 +1,59 @@
 var roleEmbryo = {
-        // a function to run the logic for this role
-        run: function(creep) {
-            // if creep is trying to repair something but has no energy left
-             if (creep.store[RESOURCE_ENERGY] < creep.store.getFreeCapacity()) {
-                // switch state
-                creep.memory.full = false;
-                creep.say("harvest");
-                //console.log(creep.memory.repairing, "test")
-            }
-            // if creep is harvesting energy but is full
-           else if (creep.store.getFreeCapacity(RESOURCE_ENERGY) == 0) {
-                // switch state
-                creep.memory.full = true;
-                creep.say("fill");
-            }
-    //console.log(creep.memory.repairing, "test2")
-            // if creep is supposed to repair something
-           else if (creep.memory.full == false) {
-               let storage = creep.pos.findClosestByPath(FIND_STRUCTURES, {
-                
-                    filter: { structureType: STRUCTURE_CONTAINER }
-                    
-                });
-                
-               if (creep.memory.repairing == false && storage != undefined) {
-                if (creep.withdraw(storage, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                        creep.moveTo(storage);
-                    }
-                }
 
+    /** @param {Creep} creep **/
+    run: function(creep) {
 
-
-        else if(creep.memory.full == true && Game.spawns['Spawn1'].energy < Game.spawns['Spawn1'].energyCapacity) {
-            if(creep.transfer(Game.spawns['Spawn1'], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(Game.spawns['Spawn1']);
+        if (creep.store[RESOURCE_ENERGY] < creep.store.getFreeCapacity()) {
+            // switch state
+            creep.memory.filling = false;
+            console.log(creep.memory.filling,'embryo 1');
+            creep.say("gather");
+            //console.log(creep.memory.repairing, "test")
+        }
+        let storage = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+            // the second argument for findClosestByPath is an object which takes
+            // a property called filter which can be a function
+            // we use the arrow operator to define it
+            filter: { structureType: STRUCTURE_CONTAINER }
+            
+            
+        });
+        //console.log(storage, 'embryo storage')
+        if (creep.memory.filling == false && storage != undefined) {
+            if (creep.withdraw(storage, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(storage);
+                //console.log(creep.moveTo(storage,'embryo moving'))
             }
         }
+        if (creep.store[RESOURCE_ENERGY] == 50) {
+            // switch state
+            creep.memory.filling = true;
+            creep.say("fill");
+            //console.log(creep.memory.repairing, "test")
+        }
+        let spawn = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+            // the second argument for findClosestByPath is an object which takes
+            // a property called filter which can be a function
+            // we use the arrow operator to define it
+            filter: { structureType: STRUCTURE_SPAWN }
+            
+            
+        });
+        //console.log(spawn, 'embryo storage')
+        if (creep.memory.filling == true && storage != undefined) {
+            if (creep.transfer(spawn, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(spawn);
+                console.log(creep.moveTo(spawn,'embryo moving'))
+            }
+        }
+        
+        
     }
-}
+
 };
+
+
+    
+
 
 module.exports = roleEmbryo;
