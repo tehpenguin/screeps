@@ -14,12 +14,13 @@ var roleTrucker= require('role.trucker')
 var roleRampart = require('role.rampart')
 var roleSettler = require('role.settler')
 var towers = require('towers')
-
+var links = require('links')
 
 
 
 module.exports.loop = function () {
     towers.tick()
+    links.tick()
     //Game.cpu.tickLimit()
 
 
@@ -55,6 +56,16 @@ module.exports.loop = function () {
             {memory: {role: 'settler',home: 'W52N13',upgrading: 'false'}});
     }
 
+    var multis = _.filter(Game.creeps, (creep) => creep.memory.role == 'settler','repairer','embryo');
+    console.log('Multis: ' + multis.length);
+
+    if(multis.length < 1) {
+        var newName = 'Multi' + Game.time;
+        console.log('Spawning new settler: ' + newName);
+        Game.spawns['Spawn2'].spawnCreep([WORK,CARRY,MOVE], newName,
+            {memory: {role: 'settler',role: 'repairer', role: 'embryo',home: 'W52N13',upgrading: 'false', filling: 'false', repairing: 'false'}});
+    }
+
     var conquers = _.filter(Game.creeps, (creep) => creep.memory.role == 'conquer');
     console.log('Conquers: ' + soldiers.length);
 
@@ -80,28 +91,15 @@ module.exports.loop = function () {
     if(gatherers.length < 3) {
         var newName = 'Gatherer' + Game.time;
         console.log('Spawning new gatherer: ' + newName);
-        Game.spawns['Spawn1'].spawnCreep([WORK,WORK,CARRY], newName, 
-            {memory: {role: 'gatherer'}}); 
-
-            Game.spawns['Spawn2'].spawnCreep([WORK,WORK,CARRY], newName, 
-                {memory: {role: 'gatherer'}});     
-
+        Game.spawns['Spawn1'].spawnCreep([WORK,WORK,MOVE], newName, 
+            {memory: {role: 'gatherer',repairing:'false'}}); 
             
     }
 
-    var gatherertwos = _.filter(Game.creeps, (creep) => creep.memory.role == 'gatherertwo');
-    console.log('Gatherertwos: ' + gatherertwos.length);
-    
-    if(gatherertwos.length < 1) {
-        var newName = 'Gatherertwo' + Game.time;
-        console.log('Spawning new gatherertwo: ' + newName);
-        Game.spawns['Spawn2'].spawnCreep([WORK,WORK,WORK,MOVE], newName,
-            {memory: {role: 'gatherertwo'}});
-    }
     var harvesterlrs = _.filter(Game.creeps, (creep) => creep.memory.role == 'harvesterlr');
     console.log('HarvesterLRs: ' + harvesterlrs.length);
 
-    if(harvesterlrs.length < 0) {
+    if(harvesterlrs.length < 1) {
         var newName = 'HarvesterLR' + Game.time;
         console.log('Spawning new harvester: ' + newName);
         Game.spawns['Spawn1'].spawnCreep([WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE], newName,
@@ -126,7 +124,7 @@ module.exports.loop = function () {
     if(embryos.length < 3) {
         var newName = 'Embryo' + Game.time;
         console.log('Spawning new embryo: ' + newName);
-        Game.spawns['Spawn1'].spawnCreep([WORK,CARRY,CARRY,CARRY,MOVE], newName,
+        Game.spawns['Spawn1'].spawnCreep([WORK,CARRY,MOVE], newName,
             {memory: {role: 'embryo',filling:'false'}});
     }
 
@@ -191,6 +189,7 @@ module.exports.loop = function () {
 
     for(var name in Game.creeps) {
         var creep = Game.creeps[name];
+
         if(creep.memory.role == 'gatherer') {
             roleGatherer.run(creep);
         }
@@ -202,6 +201,7 @@ module.exports.loop = function () {
             roleEmbryo.run(creep);
             
         }
+
 
         
         if(creep.memory.role == 'conquer') {
